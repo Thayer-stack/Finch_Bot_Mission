@@ -57,8 +57,8 @@ namespace Project_FinchControl
         {
             Console.WindowWidth = 120;
             Console.WindowHeight = 25;
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.White;
         }
 
         #region MAIN MENU
@@ -787,6 +787,7 @@ namespace Project_FinchControl
                 myFinch.wait(1000);
                 myFinch.setLED(0, 0, 0);
                 myFinch.noteOff();
+                myFinch.setMotors(200, 200);
                 myFinch.wait(frequencyOfdataPointsinMilSeconds);
                 myFinch.setMotors(0, 0);
 
@@ -811,6 +812,7 @@ namespace Project_FinchControl
                 myFinch.wait(1000);
                 myFinch.setLED(0, 0, 0);
                 myFinch.noteOff();
+                myFinch.setMotors(200, 200);
                 myFinch.wait(frequencyOfdataPointsinMilSeconds);
                 myFinch.setMotors(0, 0);
 
@@ -835,6 +837,7 @@ namespace Project_FinchControl
                 myFinch.wait(1000);
                 myFinch.setLED(0, 0, 0);
                 myFinch.noteOff();
+                myFinch.setMotors(200, 200);
                 myFinch.wait(frequencyOfdataPointsinMilSeconds);
                 myFinch.setMotors(0, 0);
 
@@ -1011,6 +1014,7 @@ namespace Project_FinchControl
                     myFinch.wait(1000);
                     myFinch.setLED(0, 0, 0);
                     myFinch.noteOff();
+                    myFinch.setMotors(200, 200);
                     myFinch.wait(frequencyOfdataPointsinMilSeconds);
                     myFinch.setMotors(0, 0);
                                         
