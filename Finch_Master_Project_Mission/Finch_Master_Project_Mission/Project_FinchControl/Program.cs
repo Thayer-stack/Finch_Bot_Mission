@@ -344,12 +344,12 @@ namespace Project_FinchControl
 
             int[] lightSenorsMinMaxThresholdValues = null;
             int timeToMonitor = 0;
-            int TemperatureMinMaxThresholdValues = 0;
+            int []TemperatureMinMaxThresholdValues = null;
 
             do
             {
-                DisplayScreenHeader("Alarm System Menu");
-                Console.WriteLine("\t\t_________________________\n");
+                DisplayScreenHeader         ("Alarm System Menu");
+                Console.WriteLine("\t\t_______________________________\n");
                 Console.WriteLine("\t\ta> Sensors to Monitor");
                 Console.WriteLine("\t\tb> Light Sensor Threshold");
                 Console.WriteLine("\t\tc> Temperature Sensor Threshold");
@@ -380,7 +380,7 @@ namespace Project_FinchControl
                         timeToMonitor = AlarmSystemTimeToMonitor();
                         break;
                     case "e":
-                        if (sensorsToMonitor == null || (TemperatureMinMaxThresholdValues == 0 && sensorsToMonitor[1] == "yes")
+                        if (sensorsToMonitor == null || (TemperatureMinMaxThresholdValues == null && sensorsToMonitor[1] == "yes")
                             || (lightSenorsMinMaxThresholdValues == null && sensorsToMonitor[0] != "no") || timeToMonitor == 0)
                         {
 
@@ -416,11 +416,17 @@ namespace Project_FinchControl
         /// <param name="sensorsToMonitor"></param>
         /// <param name="lightSenorsMinMaxThresholdValues"></param>
         /// <param name="timeToMonitor"></param>
-        static void AlarmSystemSetAlarms(Finch myfinch, int TemperatureMinMaxThresholdValues, string[] sensorsToMonitor, int[] lightSenorsMinMaxThresholdValues, int timeToMonitor)
-        {
-            DisplayScreenHeader("Set the Alarm System");          
-                        
+        static void AlarmSystemSetAlarms(Finch myfinch, int[] TemperatureMinMaxThresholdValues, string[] sensorsToMonitor, int[] lightSenorsMinMaxThresholdValues, int timeToMonitor)
+        {                   
             int seconds = 1;
+
+            if (lightSenorsMinMaxThresholdValues == null)
+            {
+                lightSenorsMinMaxThresholdValues[0] = 0;
+                lightSenorsMinMaxThresholdValues[1] = 0;
+            }
+
+            DisplayScreenHeader("Set the Alarm System");
 
             Console.CursorVisible = false;
 
@@ -431,7 +437,7 @@ namespace Project_FinchControl
             Console.WriteLine("\n\tCurrent Thresholds" +
                 "\n\t");
             Console.WriteLine($"\n\tMin/Max Threshhold Values for Light Sensors: Left: {lightSenorsMinMaxThresholdValues[0]} Right: {lightSenorsMinMaxThresholdValues[0]}");
-            Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: {TemperatureMinMaxThresholdValues}");
+            Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: Minimum: {TemperatureMinMaxThresholdValues[0]} Maximum: {TemperatureMinMaxThresholdValues[1]}");
             Console.WriteLine($"\n\tTime for Alarm system to Monitor in seconds: {timeToMonitor / 1000}");
             Console.WriteLine("\n\t");
 
@@ -448,7 +454,7 @@ namespace Project_FinchControl
             {
                 thresholdExceeded = false;
 
-                //GetCurrentSenorsReading(myfinch);
+                // Get Current Senors Reading \\
 
                 thresholdExceeded = AlarmSystemLightSensorThresholdExceeded(myfinch, sensorsToMonitor, lightSenorsMinMaxThresholdValues) ||
                     AlarmSystemTemperaturesThreshHoldExceeded(TemperatureMinMaxThresholdValues, sensorsToMonitor, myfinch) ||
@@ -469,7 +475,7 @@ namespace Project_FinchControl
                 {
                     thresholdExceeded = true;
                 }
-            } while (thresholdExceeded == false || seconds > timeToMonitor);
+            } while (thresholdExceeded == false || seconds < timeToMonitor);
 
             if (thresholdExceeded == true)
             {
@@ -480,7 +486,7 @@ namespace Project_FinchControl
                 myfinch.setLED(255, 0, 0);
 
                 Console.WriteLine($"\n\tMin/Max Threshhold Values for Light Sensors: Left: {lightSenorsMinMaxThresholdValues[0]} Right: {lightSenorsMinMaxThresholdValues[1]}");
-                Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: {TemperatureMinMaxThresholdValues}");
+                Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: Minimum: {TemperatureMinMaxThresholdValues[0]} Maximum: {TemperatureMinMaxThresholdValues[1]}");
                 Console.WriteLine($"\n\tTime for Alarm system to Monitor in seconds: {timeToMonitor / 1000}\n");
 
                 GetCurrentSenorsReading(myfinch);
@@ -498,32 +504,36 @@ namespace Project_FinchControl
 
             DisplayMenuPrompt("Alarm system");
         }
+
+        /// <summary>
+        /// GetCurrentSenorsReading \\\
+        /// </summary>
+        /// <param name="myfinch"></param>
         static void GetCurrentSenorsReading(Finch myfinch)
         {
             Console.CursorVisible = false;
+            bool[] currentobstacleReading = myfinch.getObstacleSensors();
+
 
             Console.WriteLine($"\n\tCurrent Light Sensor Reading: Left: {myfinch.getLeftLightSensor()} Right: {myfinch.getRightLightSensor()}");
             Console.WriteLine($"\n\tCurrent Temperature Sensor Reading: {myfinch.getTemperature()} Celcius");
-            Console.WriteLine($"\n\tCurrent object Sensor Reading: {myfinch.getObstacleSensors().GetType()}");
+            Console.WriteLine($"\n\tCurrent object Sensor Reading: Left {currentobstacleReading[0]} Right {currentobstacleReading[1]}");
         }
+
         /// <summary>
-        /// 
+        /// Alarm System Object Detected \\\
         /// </summary>
         /// <param name="sensorsToMonitor"></param>
         /// <param name="myfinch"></param>
         /// <returns></returns>
-            static bool AlarmSystemObjectDetected(string[] sensorsToMonitor, Finch myfinch)
-        {
-            int i = 0;
-            bool[] getObstacleReadingArray = new bool[i];
-            bool thresholdExceeded = false;
-                        
-            for (i = 0; i < 1; i++)
-            {
-                myfinch.wait(1);
-                getObstacleReadingArray = myfinch.getObstacleSensors();                
-            }
-
+        static bool AlarmSystemObjectDetected(string[] sensorsToMonitor, Finch myfinch)
+        {            
+            bool[] getObstacleReadingArray = new bool[2];
+            bool thresholdExceeded = false;                        
+            
+            getObstacleReadingArray[0] = myfinch.isObstacleLeftSide();
+            getObstacleReadingArray[1] = myfinch.isObstacleRightSide();
+            
             switch (sensorsToMonitor[2])
             {
                 case "yes":
@@ -542,13 +552,22 @@ namespace Project_FinchControl
                     break;
 
                 default:
+                    thresholdExceeded = false;
                     break;
             }
 
             return thresholdExceeded;
 
         }
-        static bool AlarmSystemTemperaturesThreshHoldExceeded(int TemperatureMinMaxThresholdValues, string[] sensorsToMonitor, Finch myfinch)
+
+        /// <summary>
+        /// Alarm System Temperatures Thresh Hold Exceeded \\\
+        /// </summary>
+        /// <param name="TemperatureMinMaxThresholdValues"></param>
+        /// <param name="sensorsToMonitor"></param>
+        /// <param name="myfinch"></param>
+        /// <returns></returns>
+        static bool AlarmSystemTemperaturesThreshHoldExceeded(int[] TemperatureMinMaxThresholdValues, string[] sensorsToMonitor, Finch myfinch)
         {
             double currentTemperatureReading = myfinch.getTemperature();
 
@@ -557,7 +576,7 @@ namespace Project_FinchControl
             switch (sensorsToMonitor[1])
             {
                 case "yes":
-                    if (currentTemperatureReading < TemperatureMinMaxThresholdValues  || currentTemperatureReading > TemperatureMinMaxThresholdValues)
+                    if (currentTemperatureReading < TemperatureMinMaxThresholdValues[0]  || currentTemperatureReading > TemperatureMinMaxThresholdValues[1])
                     {
                         thresholdExceeded = true;
                     }
@@ -579,8 +598,9 @@ namespace Project_FinchControl
             return thresholdExceeded;
 
         }
+
         /// <summary>
-        /// Alarm System Light sensor Threshold Exceeded
+        /// Alarm System Light sensor Threshold Exceeded \\\
         /// </summary>
         /// <param name="myfinch"></param>
         /// <param name="sensorsToMonitor"></param>
@@ -593,10 +613,17 @@ namespace Project_FinchControl
 
             bool thresholdExceeded;
 
+            // int[] lightSenorsMinMaxThresholdValues
+            // Array Index
+            // [0] = minThresholdValuesLeft 
+            // [1] = maxThresholdValuesLeft 
+            // [2] = minThresholdValuesRight
+            // [3] = maxThresholdValuesRight
+
             switch (sensorsToMonitor[0])
             {
                 case "left":
-                    if (currentLeftLightSensorValue < lightSenorsMinMaxThresholdValues[0] || currentLeftLightSensorValue > lightSenorsMinMaxThresholdValues[0])
+                    if (currentLeftLightSensorValue < lightSenorsMinMaxThresholdValues[1] || currentLeftLightSensorValue > lightSenorsMinMaxThresholdValues[0])
                     {
                         thresholdExceeded = true;
                     }
@@ -606,7 +633,7 @@ namespace Project_FinchControl
                     }
                     break;
                 case "right":
-                    if (currentRightLightSensorValue < lightSenorsMinMaxThresholdValues[1] || currentRightLightSensorValue > lightSenorsMinMaxThresholdValues[1])
+                    if (currentRightLightSensorValue < lightSenorsMinMaxThresholdValues[3] || currentRightLightSensorValue > lightSenorsMinMaxThresholdValues[2])
                     {
                         thresholdExceeded = true;
                     }
@@ -617,7 +644,7 @@ namespace Project_FinchControl
                     break;
 
                 case "both":
-                    if ((currentLeftLightSensorValue < lightSenorsMinMaxThresholdValues[0] || currentRightLightSensorValue < lightSenorsMinMaxThresholdValues[1]) && (currentLeftLightSensorValue > lightSenorsMinMaxThresholdValues[0] || currentRightLightSensorValue > lightSenorsMinMaxThresholdValues[1]))
+                    if (currentLeftLightSensorValue < lightSenorsMinMaxThresholdValues[1] || currentRightLightSensorValue < lightSenorsMinMaxThresholdValues[3] || currentLeftLightSensorValue > lightSenorsMinMaxThresholdValues[0] || currentRightLightSensorValue > lightSenorsMinMaxThresholdValues[2])
                     {
                         thresholdExceeded = true;
                     }
@@ -637,8 +664,9 @@ namespace Project_FinchControl
 
             return thresholdExceeded;
         }
+
         /// <summary>
-        /// AlarmSystem TimeToMonitor
+        /// Alarm System Time To Monitor \\\
         /// </summary>
         /// <returns></returns>
         static int AlarmSystemTimeToMonitor()
@@ -667,8 +695,8 @@ namespace Project_FinchControl
                 else
                 {
                     validResponse = false;
-                    Console.CursorVisible = true;
-                    Console.Write("\n\tPlease enter a valid numerical value: ");
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
                 }
             } while (!validResponse);
 
@@ -678,9 +706,8 @@ namespace Project_FinchControl
 
         }
 
-
         /// <summary>
-        /// AlarmSystem LightSensors Threshold \\\
+        /// Alarm System Light Sensors Threshold \\\
         /// </summary>
         /// <param name="myfinch"></param>
         /// <returns></returns>
@@ -689,28 +716,35 @@ namespace Project_FinchControl
             Console.Clear();
             Console.CursorVisible = true;
 
-            int[] lightSenorsMinMaxThresholdValues = new int[2];
+            int[] lightSenorsMinMaxThresholdValues = new int[4];
+
+            // Array Index
+            // [0] = minThresholdValuesLeft 
+            // [1] = maxThresholdValuesLeft 
+            // [2] = minThresholdValuesRight
+            // [3] = maxThresholdValuesRight
+
             Console.WriteLine($"\n\tCurrent values for both left and right light sensor:" +
                 $"\n\tLeft: {myfinch.getLeftLightSensor()} Right: {myfinch.getRightLightSensor()}");
             bool validResponse;
+
             do
             {
                 validResponse = true;
 
-                Console.Write($"\n\tEnter Threshold for [Left] light sensors: ");
+                Console.Write($"\n\tEnter Minimum Threshold for [Left] light sensors: ");
                 string userResponse = Console.ReadLine();
 
-                if (int.TryParse(userResponse, out int minMaxThresholdValuesLeft))
+                if (int.TryParse(userResponse, out int minThresholdValuesLeft))
                 {
                     Console.CursorVisible = false;
-                    lightSenorsMinMaxThresholdValues[0] = minMaxThresholdValuesLeft;
-                    DisplayContinuePrompt();
+                    lightSenorsMinMaxThresholdValues[0] = minThresholdValuesLeft;                    
                 }
                 else
                 {
                     validResponse = false;
-                    Console.CursorVisible = true;
-                    Console.Write("\n\tPlease enter a valid numerical value: ");
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
                 }
             } while (!validResponse);
 
@@ -718,35 +752,76 @@ namespace Project_FinchControl
             {
                 validResponse = true;
 
-                Console.Write($"\n\tEnter Threshold for [Right] light sensors: ");
+                Console.Write($"\n\tEnter Maximum Threshold for [Left] light sensors: ");
                 string userResponse = Console.ReadLine();
 
-                if (int.TryParse(userResponse, out int minMaxThresholdValuesRight))
+                if (int.TryParse(userResponse, out int maxThresholdValuesLeft))
                 {
                     Console.CursorVisible = false;
-                    lightSenorsMinMaxThresholdValues[1] = minMaxThresholdValuesRight;
+                    lightSenorsMinMaxThresholdValues[1] = maxThresholdValuesLeft;
+                }
+                else
+                {
+                    validResponse = false;
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
+                }
+            } while (!validResponse);
+
+            do
+            {
+                validResponse = true;
+
+                Console.Write($"\n\tEnter Minimum Threshold for [Right] light sensors: ");
+                string userResponse = Console.ReadLine();
+
+                if (int.TryParse(userResponse, out int minThresholdValuesRight))
+                {
+                    Console.CursorVisible = false;
+                    lightSenorsMinMaxThresholdValues[2] = minThresholdValuesRight;                    
+                }
+                else
+                {
+                    validResponse = false;
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
+                }
+            } while (!validResponse);
+
+            do
+            {
+                validResponse = true;
+
+                Console.Write($"\n\tEnter Minimum Threshold for [Right] light sensors: ");
+                string userResponse = Console.ReadLine();
+
+                if (int.TryParse(userResponse, out int maxThresholdValuesRight))
+                {
+                    Console.CursorVisible = false;
+                    lightSenorsMinMaxThresholdValues[3] = maxThresholdValuesRight;
                     DisplayMenuPrompt("Alarm system");
                 }
                 else
                 {
                     validResponse = false;
-                    Console.CursorVisible = true;
-                    Console.Write("\n\tPlease enter a valid numerical value: ");
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
                 }
             } while (!validResponse);
 
             return lightSenorsMinMaxThresholdValues;
         }
+
         /// <summary>
         /// AlarmSystem Temperature Threshold \\\
         /// </summary>
         /// <returns></returns>
-        static int AlarmSystemTemperatureThreshold(Finch myfinch)
+        static int[] AlarmSystemTemperatureThreshold(Finch myfinch)
         {
             Console.Clear();
             Console.CursorVisible = true;
 
-            int TemperatureMinMaxThresholdValues;
+            int[] TemperatureMinMaxThresholdValues = new int[2];
             bool validResponse;
 
             Console.WriteLine($"\n\tCurrent Temperature Value:" +
@@ -755,10 +830,29 @@ namespace Project_FinchControl
             {
                 validResponse = true;
 
-                Console.Write($"\n\tEnter Threshold for temperature sensors: ");
+                Console.Write($"\n\tPlease Enter Mininum Temperature Threshold: ");
                 string userResponse = Console.ReadLine();
 
-                if (int.TryParse(userResponse, out TemperatureMinMaxThresholdValues))
+                if (int.TryParse(userResponse, out TemperatureMinMaxThresholdValues[0]))
+                {
+                    Console.CursorVisible = false;                    
+                }
+                else
+                {
+                    validResponse = false;
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
+                }
+            } while (!validResponse);
+
+            do
+            {
+                validResponse = true;
+
+                Console.Write($"\n\tPlease Enter Maximum Temperature Threshold: ");
+                string userResponse = Console.ReadLine();
+
+                if (int.TryParse(userResponse, out TemperatureMinMaxThresholdValues[1]))
                 {
                     Console.CursorVisible = false;
                     DisplayMenuPrompt("Alarm system");
@@ -766,8 +860,8 @@ namespace Project_FinchControl
                 else
                 {
                     validResponse = false;
-                    Console.CursorVisible = true;
-                    Console.Write("\n\tPlease enter a valid numerical value: ");
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a valid numerical value");
                 }
             } while (!validResponse);
 
@@ -775,7 +869,7 @@ namespace Project_FinchControl
         }
                 
         /// <summary>
-        /// Alarms the system sensors to monitor \\\
+        /// Alarm system sensors to monitor \\\
         /// </summary>
         /// <returns>The system sensors to monitor.</returns>
         static string[] AlarmSystemSensorsToMonitor()
@@ -783,24 +877,70 @@ namespace Project_FinchControl
             Console.Clear();
             Console.CursorVisible = true;
 
+            bool validResponse;
             string[] sensorsToMonitor = new string[3];
-                      
+
             Console.WriteLine("\n\tSensors to Monitor\n");
-            Console.Write("\n\tDo you want to Monitor the Light Sensors? [left, right, both, no]:");
-            string lightSensorsToMonitor = Console.ReadLine();
-            sensorsToMonitor[0] = lightSensorsToMonitor;
-            
-            Console.Write("\n\tDo you want to Monitor the Temperature? [yes, no]:");
-            string temperaturesToMonitor = Console.ReadLine();
-            sensorsToMonitor[1] = temperaturesToMonitor;
-            
-            Console.Write("\n\tDo you want to Monitor the Obstacle sensor? [yes, no]:");
-            string obstacleToMonitor = Console.ReadLine();
-            sensorsToMonitor[2] = obstacleToMonitor;
 
-            Console.CursorVisible = false;
-            DisplayMenuPrompt("Alarm System");
+            do
+            {
+                validResponse = true;              
+                                
+                Console.Write("\n\tDo you want to Monitor the Light Sensors? [left, right, both, no]: ");
+                string lightSensorsToMonitor = Console.ReadLine().ToLower();
 
+                if (lightSensorsToMonitor == "left" || lightSensorsToMonitor == "right" || lightSensorsToMonitor == "both" || lightSensorsToMonitor == "no")
+                {
+                    sensorsToMonitor[0] = lightSensorsToMonitor;                                       
+                }
+                else
+                {
+                    validResponse = false;
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a correct response");                    
+                }
+            } while (!validResponse);
+
+            do
+            {
+                validResponse = true;
+                
+                Console.Write("\n\tDo you want to Monitor the Temperature? [yes, no]: ");
+                string temperaturesToMonitor = Console.ReadLine().ToLower();
+
+                if (temperaturesToMonitor == "yes" || temperaturesToMonitor == "no")
+                {
+                    sensorsToMonitor[1] = temperaturesToMonitor;
+                }
+                else
+                {
+                    validResponse = false;
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a correct response");                    
+                }
+            } while (!validResponse);
+
+            do
+            {
+                validResponse = true;
+
+                Console.Write("\n\tDo you want to Monitor the Obstacle sensor? [yes, no]: ");
+                string obstacleToMonitor = Console.ReadLine().ToLower();
+
+                if (obstacleToMonitor == "yes" || obstacleToMonitor == "no")
+                {
+                    sensorsToMonitor[2] = obstacleToMonitor;
+                    Console.CursorVisible = false;
+                    DisplayMenuPrompt("Alarm System");
+                }
+                else
+                {
+                    validResponse = false;
+                    Console.CursorVisible = false;
+                    Console.WriteLine("\n\tPlease enter a correct response");                    
+                }
+            } while (!validResponse);
+            
             return sensorsToMonitor;
         }
         #endregion
