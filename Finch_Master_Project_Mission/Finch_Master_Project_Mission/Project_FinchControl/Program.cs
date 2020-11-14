@@ -425,8 +425,7 @@ namespace Project_FinchControl
         /// <param name="timeToMonitor"></param>
         static void AlarmSystemSetAlarms(Finch myfinch, int[] TemperatureMinMaxThresholdValues, string[] sensorsToMonitor, int[] LightSenorsMinMaxThresholdValues, int timeToMonitor)
         {                   
-            int seconds = 1;
-            int timeToMonitorinSeconds = timeToMonitor / 1000;
+            int seconds = 1;            
 
             DisplayScreenHeader("Set the Alarm System");
 
@@ -436,8 +435,7 @@ namespace Project_FinchControl
                 $"\n\n\tLight Sensor: {sensorsToMonitor[0]}" +
                 $"\n\n\tTemperature Sensor: {sensorsToMonitor[1]}" +
                 $"\n\n\tObstacle Sensor: {sensorsToMonitor[2]}");
-            Console.WriteLine("\n\tCurrent Thresholds" +
-                "\n\t");
+            Console.WriteLine("\n\tCurrent Thresholds");
             Console.WriteLine($"\n\tMin/Max Threshhold Values for Light Sensors:" +
                 $"\n\tLeft Minimum: {LightSenorsMinMaxThresholdValues[0]} Left Maximum: {LightSenorsMinMaxThresholdValues[1]}" +
                 $"\n\tRight Minimum: {LightSenorsMinMaxThresholdValues[2]} Right Maximum: {LightSenorsMinMaxThresholdValues[3]}");
@@ -473,13 +471,14 @@ namespace Project_FinchControl
                     myfinch.wait(1000);
                     myfinch.setLED(0, 0, 0);
                     GetCurrentSenorsReading(myfinch);
+                    seconds++;
 
                 }
                 else
                 {
                     thresholdExceeded = true;
                 }
-            } while (thresholdExceeded == false || seconds > timeToMonitorinSeconds);
+            } while (thresholdExceeded == false && seconds < timeToMonitor);
 
             if (thresholdExceeded == true)
             {
@@ -493,7 +492,7 @@ namespace Project_FinchControl
                 $"\n\tLeft Minimum: {LightSenorsMinMaxThresholdValues[0]} Left Maximum: {LightSenorsMinMaxThresholdValues[1]}" +
                 $"\n\tRight Minimum: {LightSenorsMinMaxThresholdValues[2]} Right Maximum: {LightSenorsMinMaxThresholdValues[3]}");
                 Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: Minimum: {TemperatureMinMaxThresholdValues[0]} Maximum: {TemperatureMinMaxThresholdValues[1]}");
-                Console.WriteLine($"\n\tTime for Alarm system to Monitor in seconds: {timeToMonitor / 1000}\n");
+                Console.WriteLine($"\n\tTime for Alarm system to Monitor in seconds: {timeToMonitor}");
 
                 GetCurrentSenorsReading(myfinch);
 
@@ -504,7 +503,7 @@ namespace Project_FinchControl
             }
             else
             {
-                Console.WriteLine("Alarm timed out before Threshold was Exceeded");
+                Console.WriteLine("\n\tAlarm timed out before Threshold was Exceeded");
             }
 
 
@@ -684,7 +683,7 @@ namespace Project_FinchControl
 
             DisplayScreenHeader("Time to Monitor");
 
-            int timeToMonitorInSeconds;
+            int timeToMonitor;
             do
             {
                 validResponse = true;
@@ -692,7 +691,7 @@ namespace Project_FinchControl
                 Console.Write("\n\tLength of time for Alarm To Monitor in Seconds: ");
                 string userResponse = Console.ReadLine();
 
-                if (int.TryParse(userResponse, out timeToMonitorInSeconds))
+                if (int.TryParse(userResponse, out timeToMonitor))
                 {
                     Console.CursorVisible = false;
                     DisplayMenuPrompt("Alarm system");
@@ -706,7 +705,7 @@ namespace Project_FinchControl
                 }
             } while (!validResponse);
 
-            int timeToMonitor = timeToMonitorInSeconds * 1000;
+            
 
             return timeToMonitor;
 
