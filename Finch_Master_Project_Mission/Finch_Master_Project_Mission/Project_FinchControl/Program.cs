@@ -19,7 +19,7 @@ namespace Project_FinchControl
     // Author: Velis, John
     // Author: Thayer, Shaun
     // Dated Created: 1/22/2020
-    // Last Modified: 11/13/2020
+    // Last Modified: 11/15/2020
     //
     // **************************************************
     public enum Command
@@ -436,7 +436,7 @@ namespace Project_FinchControl
             Console.WriteLine("\t________________________________________________________________\n");
             Console.WriteLine($"\n\tMin/Max Threshhold Values for Light Sensors:" +
                 $"\n\n\tLeft Minimum: {LightSenorsMinMaxThresholdValues[0]} Left Maximum: {LightSenorsMinMaxThresholdValues[1]}" +
-                $"\\n\n\tRight Minimum: {LightSenorsMinMaxThresholdValues[2]} Right Maximum: {LightSenorsMinMaxThresholdValues[3]}");
+                $"\n\n\tRight Minimum: {LightSenorsMinMaxThresholdValues[2]} Right Maximum: {LightSenorsMinMaxThresholdValues[3]}");
             Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: Minimum: {TemperatureMinMaxThresholdValues[0]} Maximum: {TemperatureMinMaxThresholdValues[1]}");
             Console.WriteLine($"\n\tTime for Alarm system to Monitor in seconds: {timeToMonitor / 1000}");
             Console.WriteLine("$\n\tPress any key to set the alarm");
@@ -487,8 +487,8 @@ namespace Project_FinchControl
                 myfinch.setLED(255, 0, 0);
 
                 Console.WriteLine($"\n\tMin/Max Threshhold Values for Light Sensors:" +
-                $"\n\tLeft Minimum: {LightSenorsMinMaxThresholdValues[0]} Left Maximum: {LightSenorsMinMaxThresholdValues[1]}" +
-                $"\n\tRight Minimum: {LightSenorsMinMaxThresholdValues[2]} Right Maximum: {LightSenorsMinMaxThresholdValues[3]}");
+                $"\n\n\tLeft Minimum: {LightSenorsMinMaxThresholdValues[0]} Left Maximum: {LightSenorsMinMaxThresholdValues[1]}" +
+                $"\n\n\tRight Minimum: {LightSenorsMinMaxThresholdValues[2]} Right Maximum: {LightSenorsMinMaxThresholdValues[3]}");
                 Console.WriteLine($"\n\tMin/Max Threshhold Values for Temp Sensors: Minimum: {TemperatureMinMaxThresholdValues[0]} Maximum: {TemperatureMinMaxThresholdValues[1]}");
                 Console.WriteLine($"\n\tTime for Alarm system to Monitor in seconds: {timeToMonitor}");
 
@@ -527,9 +527,9 @@ namespace Project_FinchControl
             bool currentobstacleReadingright = myfinch.isObstacleRightSide();
 
 
-            Console.WriteLine($"\n\tCurrent Light Sensor Reading: Left: {myfinch.getLeftLightSensor()} Right: {myfinch.getRightLightSensor()}");
-            Console.WriteLine($"\n\tCurrent Temperature Sensor Reading: {myfinch.getTemperature()} Celcius");
-            Console.WriteLine($"\n\tCurrent object Sensor Reading: Left {currentobstacleReadingleft} Right {currentobstacleReadingright}");
+            Console.WriteLine($"\n\n\tCurrent Light Sensor Reading: Left: {myfinch.getLeftLightSensor()} Right: {myfinch.getRightLightSensor()}");
+            Console.WriteLine($"\n\n\tCurrent Temperature Sensor Reading: {myfinch.getTemperature()} Celcius");
+            Console.WriteLine($"\n\n\tCurrent object Sensor Reading: Left {currentobstacleReadingleft} Right {currentobstacleReadingright}");
         }
 
         /// <summary>
