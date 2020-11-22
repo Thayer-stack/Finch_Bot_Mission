@@ -56,8 +56,8 @@ namespace Project_FinchControl
         /// </summary>
         static void SetTheme()
         {
-            // Console.WindowWidth = 120;
-            //Console.WindowHeight = 25;
+            Console.WindowWidth = 120;
+            Console.WindowHeight = 40;
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.White;
         }
@@ -85,13 +85,13 @@ namespace Project_FinchControl
                 //
                 // get user menu choice
                 //
-                Console.WriteLine("\t\ta) Connect Finch Robot");
-                Console.WriteLine("\t\tb) Talent Show");
-                Console.WriteLine("\t\tc) Data Recorder");
-                Console.WriteLine("\t\td) Alarm System");
-                Console.WriteLine("\t\te) User Programming");
-                Console.WriteLine("\t\tf) Disconnect Finch Robot");
-                Console.WriteLine("\t\tq) Quit");
+                Console.WriteLine("\t\t(a): Connect Finch Robot");
+                Console.WriteLine("\t\t(b): Talent Show");
+                Console.WriteLine("\t\t(c): Data Recorder");
+                Console.WriteLine("\t\t(d): Alarm System");
+                Console.WriteLine("\t\t(e): User Programming");
+                Console.WriteLine("\t\t(f): Disconnect Finch Robot");
+                Console.WriteLine("\t\t(q): Quit");
                 Console.Write("\n\t\t\tEnter Choice:");
                 menuChoice = Console.ReadLine();
 
@@ -161,6 +161,7 @@ namespace Project_FinchControl
             do
             {
                 DisplayScreenHeader("User Programing Menu");
+                Console.WriteLine("\t\t___________________________________\n");
 
                 Console.WriteLine("\t\t(a): Set Command Parameters");
                 Console.WriteLine("\t\t(b): Add Commands to a list");
@@ -168,8 +169,8 @@ namespace Project_FinchControl
                 Console.WriteLine("\t\t(d): Execute Command list");
                 Console.WriteLine("\t\t(e): Command the Finch in real time");
                 Console.WriteLine("\t\t(q): Quit Menu");
-
-                menuChoice = Console.ReadLine();
+                Console.Write("\n\t\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
                 switch (menuChoice)
                 {
                     case "a":
@@ -189,7 +190,16 @@ namespace Project_FinchControl
                         break;
 
                     case "e":
-                        DisplayCommandFinchLive(myFinch, commands, commandParameters);
+                        if (commandParameters == (0, null, 0))
+                        {
+                            Console.CursorVisible = false;
+                            Console.WriteLine("Please Set the Command Parameters to continue");
+                            DisplayContinuePrompt();
+                        }
+                        else
+                        {
+                            DisplayCommandFinchLive(myFinch, commands, commandParameters);
+                        }                        
                         break;
 
                     case "q":
@@ -212,7 +222,6 @@ namespace Project_FinchControl
             bool isUserDone = false;
             double temperature = 0;
             
-
             Console.Clear();
             
             do
@@ -248,7 +257,7 @@ namespace Project_FinchControl
 
                 Console.SetCursorPosition(10, 24);
                 Console.Write($"\n\tCurrent Command: {info}");
-                Console.WriteLine($"\n\t{ temperature}");
+                Console.WriteLine($"\n\tTemperature Reading: {temperature}");
 
                 switch (info)
                 {
@@ -273,7 +282,7 @@ namespace Project_FinchControl
                         myFinch.setMotors(-commandParameters.motorSpeed, commandParameters.motorSpeed);
                         break;
                     case ConsoleKey.PageUp:
-                        myFinch.setLED(commandParameters.ledBrightness[0] + 20, commandParameters.ledBrightness[1] + 20, commandParameters.ledBrightness[2] + 20);
+                        myFinch.setLED(commandParameters.ledBrightness[0], commandParameters.ledBrightness[1], commandParameters.ledBrightness[2]);
                         break;
                     case ConsoleKey.PageDown:
                         Console.Write($"\n\tCurrent Command: {info}");
@@ -300,12 +309,11 @@ namespace Project_FinchControl
 
         private static void DisplayExecuteCommands(Finch myFinch, List<Command> commands,
             (int motorSpeed, int[] ledBrightness, double waitSeconds) commandParameters)
-        {
-            // to do list: validate user input
+        {          
             Console.Clear();
             DisplayScreenHeader("Execute commands");
 
-            Console.WriteLine("The Finch robot is to Execute the commands");
+            Console.WriteLine("The Finch robot is about to Execute the commands");
             DisplayContinuePrompt();
 
             foreach (Command command in commands)
@@ -344,14 +352,13 @@ namespace Project_FinchControl
                         Console.WriteLine(temperature);
                         break;
                     case Command.DONE:
-
+                        myFinch.setMotors(0, 0);
+                        DisplayMenuPrompt("To User Programing");
                         break;
                     default:
                         break;
                 }
-            }
-
-            DisplayMenuPrompt("To User Programing");
+            }            
         }
 
         /// <summary>
@@ -365,9 +372,12 @@ namespace Project_FinchControl
 
             foreach (Command command in commands)
             {
-                Console.WriteLine("\t\t" + command);
+                Console.WriteLine("\n\t\t" + command);
             }
+
+            DisplayMenuPrompt("To User Programing");
         }
+
 
         /// <summary>
         /// Displaies the get commands.
@@ -375,15 +385,12 @@ namespace Project_FinchControl
         /// <returns>The get commands.</returns>
         /// <param name="commands">Commands.</param>
         private static object DisplayGetCommands(List<Command> commands)
-        {
-            Console.Clear();
-            DisplayScreenHeader("Enter Commands");
-
+        {         
             Command command;
             bool validResponse;
             bool isDoneAddingCommands = false;
             string userResponse;
-
+                   
             do
             {
                 Console.Clear();
@@ -398,8 +405,24 @@ namespace Project_FinchControl
                         Console.WriteLine("\t\t" + commandName.ToString().ToLower());
                     }
                 }
-
-                Console.WriteLine("\n\tPlease enter [Done] when finished");
+                Console.WriteLine("\n\tPlease use the above commands to create a list of commands to be" +
+                                  "\n\texecuted by the finch bot. ");
+                Console.Write("\n\n\tThe [");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("wait");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("] command is used to give the length of time between commands.");
+                Console.Write("\n\n\tFor example, [");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("MoveForwad, Wait = (if 1 sec), TurnRight, Wait, StopMotor");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("],\n\tthe Finch bot will moveforward for 1 second then turn right" +
+                    "\n\t for 1 sec then stop.");
+                Console.Write("\n\n\tPlease enter [");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write("Done");
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.Write("] when finished.");
                 Console.CursorVisible = true;
                 Console.Write($"\n\tEnter Command: ");
                 userResponse = Console.ReadLine().ToUpper();
@@ -420,14 +443,17 @@ namespace Project_FinchControl
                         commands.Add(command);
                     }
                 }
-                else
+                else // Adds DONE to end of list for user, so finch bot stops using its case switch
                 {
+                    Enum.TryParse(userResponse, out command);
+                    commands.Add(command);
                     isDoneAddingCommands = true;
+                    Console.CursorVisible = false;                    
+                    Console.SetCursorPosition(10, 36);
+                    DisplayMenuPrompt("To User Programing");
                 }
             } while (!validResponse || !isDoneAddingCommands);
-
-            DisplayMenuPrompt("To User Programing Menu");
-
+                        
             return commands;
         }
 
@@ -453,7 +479,7 @@ namespace Project_FinchControl
                 Console.CursorVisible = true;
                 Console.Write("\n\tEnter Motor Speed: ");
                 
-                if (int.TryParse(Console.ReadLine(), out commandParameters.motorSpeed))
+                if (int.TryParse(Console.ReadLine(), out commandParameters.motorSpeed) && (commandParameters.motorSpeed <= 255))
                 {
                     Console.CursorVisible = false;
                 }
@@ -535,7 +561,7 @@ namespace Project_FinchControl
                 if (double.TryParse(Console.ReadLine(), out commandParameters.waitSeconds))
                 {
                     Console.CursorVisible = false;
-                    DisplayMenuPrompt("To User Programing Menu");
+                    DisplayMenuPrompt("To User Programing");
                 }
                 else
                 {
