@@ -182,7 +182,7 @@ namespace Project_FinchControl
                         break;
 
                     case "c":
-                        DisplayViewCommands(commands);
+                        DisplayViewCommandsAndParameters(commands, commandParameters);
                         break;
 
                     case "d":
@@ -363,7 +363,7 @@ namespace Project_FinchControl
         /// Displaies the view commands.
         /// </summary>
         /// <param name="commands">Commands.</param>
-        private static void DisplayViewCommands(List<Command> commands)
+        private static void DisplayViewCommandsAndParameters(List<Command> commands, (int motorSpeed, int[] ledBrightness, double waitSeconds) commandParameters)
         {
             Console.Clear();
             DisplayScreenHeader("User Programing");
@@ -372,6 +372,12 @@ namespace Project_FinchControl
             {
                 Console.WriteLine("\n\t\t" + command);
             }
+
+            Console.WriteLine($"\n\tMotor Speed: {commandParameters.motorSpeed}");
+            Console.WriteLine($"\n\tRed Color Value: {commandParameters.ledBrightness[0]}");
+            Console.WriteLine($"\n\tGreen Color Value: {commandParameters.ledBrightness[1]}");
+            Console.WriteLine($"\n\tBlue Color Value: {commandParameters.ledBrightness[2]}");
+            Console.WriteLine($"\n\tWait in Seconds: {commandParameters.waitSeconds}");
 
             DisplayMenuPrompt("To User Programing");
         }
