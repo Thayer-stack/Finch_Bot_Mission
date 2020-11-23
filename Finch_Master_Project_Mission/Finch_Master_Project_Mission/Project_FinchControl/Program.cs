@@ -56,7 +56,7 @@ namespace Project_FinchControl
         /// </summary>
         static void SetTheme()
         {
-            Console.WindowWidth = 120;
+            Console.WindowWidth = 90;
             Console.WindowHeight = 40;
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.White;
@@ -190,16 +190,7 @@ namespace Project_FinchControl
                         break;
 
                     case "e":
-                        if (commandParameters == (0, null, 0))
-                        {
-                            Console.CursorVisible = false;
-                            Console.WriteLine("Please Set the Command Parameters to continue");
-                            DisplayContinuePrompt();
-                        }
-                        else
-                        {
-                            DisplayCommandFinchLive(myFinch, commands, commandParameters);
-                        }                        
+                        DisplayCommandFinchLive(myFinch, commands, commandParameters);
                         break;
 
                     case "q":
@@ -229,45 +220,52 @@ namespace Project_FinchControl
                 Console.Clear();               
                 Console.CursorVisible = false;
 
-                Console.WriteLine("\t\t\tCommand the Finch Live");
+                Console.WriteLine("\n\t\t\tCommand the Finch Live");
 
-                Console.WriteLine("\t ____________________________________________________");
-                Console.WriteLine("\t|                                                    |");
-                Console.WriteLine("\t| Please use the following keys to control the Finch |");
-                Console.WriteLine("\t|____________________________________________________|");
-                Console.WriteLine("\t|               |              |     |               |");
-                Console.WriteLine("\t| Movement      | Key to Press | LED | Key to Press  |");
-                Console.WriteLine("\t|---------------|--------------|-----|---------------|");
-                Console.WriteLine("\t| Move forwad   | Up Arrow     | ON  | Page up       |");
-                Console.WriteLine("\t|---------------|--------------|-----|---------------|");
-                Console.WriteLine("\t| Move backward | Down Arrow   | OFF | Page Down     |");
-                Console.WriteLine("\t|---------------|--------------|-----|---------------|");
-                Console.WriteLine("\t| Move Right    | Right Arrow  |     |               |");
-                Console.WriteLine("\t|---------------|--------------|-----|---------------|");
-                Console.WriteLine("\t| Move Left     | Left Arrow   |     |               |");
-                Console.WriteLine("\t|---------------|--------------|-----|---------------|");
-                Console.WriteLine("\t| Stop          | Spacebar     |     |               |");
-                Console.WriteLine("\t|_______________|______________|_____|_______________|");
-                Console.WriteLine("\t|                              |                     |");
-                Console.WriteLine("\t| Take Temperature Reading     |   Press Letter \"t\"  |");
-                Console.WriteLine("\t|                              |                     |");
-                Console.WriteLine("\t|______________________________|_____________________|");
+                Console.WriteLine("\t ______________________________________________________");
+                Console.WriteLine("\t|                                                      |");
+                Console.WriteLine("\t| Please use the following keys to control the Finch   |");
+                Console.WriteLine("\t|______________________________________________________|");
+                Console.WriteLine("\t|               |              ||     |                |");
+                Console.WriteLine("\t| Movement      | Key to Press || LED | Key to Press   |");
+                Console.WriteLine("\t|_______________|______________||_____|________________|");
+                Console.WriteLine("\t|               |              ||     |                |");
+                Console.WriteLine("\t| Move forwad   | Up Arrow     || ON  | Page up        |");
+                Console.WriteLine("\t|_______________|______________||_____|________________|");
+                Console.WriteLine("\t|               |              ||     |                |");
+                Console.WriteLine("\t| Move backward | Down Arrow   || OFF | Page Down      |");
+                Console.WriteLine("\t|_______________|______________||_____|________________|");
+                Console.WriteLine("\t|               |              ||                      |");
+                Console.WriteLine("\t| Move Right    | Right Arrow  || Increase Motor Speed |");
+                Console.WriteLine("\t|_______________|______________||______________________|");
+                Console.WriteLine("\t|               |              ||                      |");
+                Console.WriteLine("\t| Move Left     | Left Arrow   || Press \"Home\" Key     |");
+                Console.WriteLine("\t|_______________|______________||______________________|");
+                Console.WriteLine("\t|               |              ||                      |");
+                Console.WriteLine("\t| Stop          | Spacebar     || Decrease Motor Speed |");
+                Console.WriteLine("\t|_______________|______________||______________________|");                              
+                Console.WriteLine("\t|                              ||                      |");
+                Console.WriteLine("\t|                              || Press \"End\" Key      |");
+                Console.WriteLine("\t|______________________________||______________________|");
+                Console.WriteLine("\t|                              ||                      |");
+                Console.WriteLine("\t| Take Temperature Reading     ||   Press Letter \"t\"   |");                
+                Console.WriteLine("\t|______________________________||______________________|");
 
                 var info = Console.ReadKey().Key;
 
-                Console.SetCursorPosition(10, 24);
+                Console.SetCursorPosition(10, 30);
                 Console.Write($"\n\tCurrent Command: {info}");
-                Console.WriteLine($"\n\tTemperature Reading: {temperature}");
+                Console.WriteLine($"\n\n\tTemperature Reading: {temperature}");
 
                 switch (info)
                 {
                     case ConsoleKey.UpArrow:
                         Console.Write($"\n\tCurrent Command: {info}");
-                        myFinch.setMotors(commandParameters.motorSpeed, commandParameters.motorSpeed);
+                        myFinch.setMotors(commandParameters.motorSpeed, commandParameters.motorSpeed);                        
                         break;
                     case ConsoleKey.DownArrow:
                         Console.Write($"\n\tCurrent Command: {info}");
-                        myFinch.setMotors(-commandParameters.motorSpeed, -commandParameters.motorSpeed);
+                        myFinch.setMotors(-commandParameters.motorSpeed, -commandParameters.motorSpeed);                        
                         break;
                     case ConsoleKey.Spacebar:
                         Console.Write($"\n\tCurrent Command: {info}");
@@ -275,11 +273,11 @@ namespace Project_FinchControl
                         break;
                     case ConsoleKey.RightArrow:
                         Console.Write($"\n\tCurrent Command: {info}");
-                        myFinch.setMotors(commandParameters.motorSpeed, -commandParameters.motorSpeed);
+                        myFinch.setMotors(commandParameters.motorSpeed, -commandParameters.motorSpeed);                       
                         break;
                     case ConsoleKey.LeftArrow:
                         Console.Write($"\n\tCurrent Command: {info}");
-                        myFinch.setMotors(-commandParameters.motorSpeed, commandParameters.motorSpeed);
+                        myFinch.setMotors(-commandParameters.motorSpeed, commandParameters.motorSpeed);                        
                         break;
                     case ConsoleKey.PageUp:
                         myFinch.setLED(commandParameters.ledBrightness[0], commandParameters.ledBrightness[1], commandParameters.ledBrightness[2]);
@@ -313,7 +311,7 @@ namespace Project_FinchControl
             Console.Clear();
             DisplayScreenHeader("Execute commands");
 
-            Console.WriteLine("The Finch robot is about to Execute the commands");
+            Console.WriteLine("\n\tThe Finch robot is about to Execute the commands");
             DisplayContinuePrompt();
 
             foreach (Command command in commands)
@@ -324,10 +322,10 @@ namespace Project_FinchControl
                         Console.WriteLine("Invalid Command");
                         break;
                     case Command.MOVEBACKWARD:
-                        myFinch.setMotors(commandParameters.motorSpeed, commandParameters.motorSpeed);
+                        myFinch.setMotors(-commandParameters.motorSpeed, -commandParameters.motorSpeed);
                         break;
                     case Command.MOVEFORWARD:
-                        myFinch.setMotors(-commandParameters.motorSpeed, -commandParameters.motorSpeed);
+                        myFinch.setMotors(commandParameters.motorSpeed, commandParameters.motorSpeed);
                         break;
                     case Command.STOPMOTOR:
                         myFinch.setMotors(0, 0);
@@ -433,8 +431,8 @@ namespace Project_FinchControl
                     if (!Enum.TryParse(userResponse, out command))
                     {
                         Console.CursorVisible = false;
+                        Console.SetCursorPosition(10, 26);
                         Console.WriteLine("\n\tPlease enter a proper command");
-                        //Console.SetCursorPosition(10, 15);
                         DisplayContinuePrompt();
                         validResponse = false;
                     }
@@ -449,7 +447,7 @@ namespace Project_FinchControl
                     commands.Add(command);
                     isDoneAddingCommands = true;
                     Console.CursorVisible = false;                    
-                    Console.SetCursorPosition(10, 36);
+                    Console.SetCursorPosition(10, 26);
                     DisplayMenuPrompt("To User Programing");
                 }
             } while (!validResponse || !isDoneAddingCommands);
