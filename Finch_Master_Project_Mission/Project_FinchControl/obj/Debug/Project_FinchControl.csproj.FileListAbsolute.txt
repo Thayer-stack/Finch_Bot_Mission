@@ -1,0 +1,11 @@
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/bin/Debug/Project_FinchControl.exe.config
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/bin/Debug/Project_FinchControl.exe
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/bin/Debug/Project_FinchControl.pdb
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/bin/Debug/FinchAPI.dll
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/bin/Debug/HidSharp.dll
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/obj/Debug/Project_FinchControl.csprojAssemblyReference.cache
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/obj/Debug/Project_FinchControl.exe.config
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/obj/Debug/Project_FinchControl.csproj.CoreCompileInputs.cache
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/obj/Debug/Project_FinchControl.csproj.CopyComplete
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/obj/Debug/Project_FinchControl.exe
+/home/t8t3rt0t/Projects/Finch_Master_Project_Mission/Project_FinchControl/obj/Debug/Project_FinchControl.pdb
